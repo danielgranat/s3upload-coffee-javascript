@@ -7,7 +7,7 @@
 class window.S3Upload
 	s3_object_name: 'default_name' # setting an object name is not recommended on the client side, override or namespace on server side
 	s3_sign_put_url: '/signS3put'
-	file_dom_selector: 'file_upload'
+	files_element: null
 	with_credentials: false
 
 	onFinishS3Put: (public_url) ->
@@ -23,7 +23,7 @@ class window.S3Upload
 
 	constructor: (options = {}) ->
 		@[option] = options[option] for option of options
-		@handleFileSelect document.getElementById(@file_dom_selector)
+		@handleFileSelect @files_element
 
 	handleFileSelect: (file_element) ->
 		@onProgress 0, 'Upload started.'
@@ -59,7 +59,7 @@ class window.S3Upload
 				catch error
 					this_s3upload.onError 'Signing server returned some ugly/empty JSON: "' + this.responseText + '"'
 					return false
-				callback decodeURIComponent(result.signed_request), result.url
+				callback result.signed_request, result.url
 			else if this.readyState == 4 and this.status != 200
 				this_s3upload.onError 'Could not contact request signing server. Status = ' + this.status
 		xhr.send()
