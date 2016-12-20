@@ -7,7 +7,8 @@
 class window.S3Upload
 	s3_object_name: 'default_name' # setting an object name is not recommended on the client side, override or namespace on server side
 	s3_sign_put_url: '/signS3put'
-	files_element: null
+	files_element: null,
+	upload_files: null,
 	with_credentials: false
 
 	onFinishS3Put: (public_url) ->
@@ -23,11 +24,13 @@ class window.S3Upload
 
 	constructor: (options = {}) ->
 		@[option] = options[option] for option of options
-		@handleFileSelect @files_element
+		if @upload_files
+			@handleFileSelect @upload_files
+		else
+			@handleFileSelect @files_element.files
 
-	handleFileSelect: (file_element) ->
+	handleFileSelect: (files) ->
 		@onProgress 0, 'Upload started.'
-		files = file_element.files
 		for f in files
 			@uploadFile(f)
 
